@@ -76,3 +76,24 @@ curl https://www.sumanganta.com/wls-admin/management/weblogic/12.2.1.3.0/domainR
 KUBE_TOKEN=$(</var/run/secrets/kubernetes.io/serviceaccount/token)
 curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/wls1/pods/$HOSTNAME
 curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/wls1/pods?labelSelector=tenant%3Dt1&fieldSelector=status
+
+----
+
+Demo
+----
+#docker image details
+#manifests - images, labels
+
+#scale
+kubectl -n wls1 get pods
+kubectl scale deployment wls-ms1 -n wls1 --replicas=3
+
+#servers
+curl https://www.sumanganta.com/wls-admin/management/weblogic/12.2.1.3.0/domainConfig/servers -u weblogic:welcome1 | jq .items[].identity
+
+#machines
+curl https://www.sumanganta.com/wls-admin/management/weblogic/12.2.1.3.0/domainConfig/servers -u weblogic:welcome1 | jq .items[].machine
+
+#states
+curl https://www.sumanganta.com/wls-admin/management/weblogic/12.2.1.3.0/domainRuntime/serverRuntimes/wls-ms1-8499c74977-j8q77 -u weblogic:welcome1 | jq .state
+

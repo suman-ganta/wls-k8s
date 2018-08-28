@@ -1,27 +1,13 @@
-#Copyright (c) 2014-2018 Oracle and/or its affiliates. All rights reserved.
-#
-#Licensed under the Universal Permissive License v 1.0 as shown at http://oss.oracle.com/licenses/upl.
-#
-# ORACLE DOCKERFILES PROJECT
-# --------------------------
-# This Dockerfile extends the Oracle WebLogic image by creating a sample domain.
-#
-# Util scripts are copied into the image enabling users to plug NodeManager
-# automatically into the AdminServer running on another container.
-#
 # HOW TO BUILD THIS IMAGE
 # -----------------------
 # Put all downloaded files in the same directory as this Dockerfile
-# Run:
-#      $ sudo docker build -t 12213-domain
-#
 # Pull base image
 # ---------------
 FROM store/oracle/weblogic:12.2.1.3
 
 # Maintainer
 # ----------
-MAINTAINER Monica Riccelli <monica.riccelli@oracle.com>
+MAINTAINER Suman Ganta <suman.g.ganta@oracle.com>
 
 # WLS Configuration
 # ---------------------------

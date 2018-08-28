@@ -9,18 +9,11 @@ echo "Domain Home: " $DOMAIN_HOME
 echo "Managed Server Name: "  $MS_NAME
 echo "NodeManager Name: "  $NM_NAME
 
-#if [ -z $ADMIN_HOST ]; then
-#   echo "      ----> admin host is not set"
-#   echo ""
 echo "Locate admin server"
-#wlst /u01/oracle/get-admin-server.py
 KUBE_TOKEN=$(</var/run/secrets/kubernetes.io/serviceaccount/token)
-tenant=$(curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/wls1/pods/$HOSTNAME" | grep tenant | cut -d ':' -f 2 | tr -d '"' | tr -d ',' | tr -d ' ')
-ADMIN_HOST=$(curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/wls1/pods?labelSelector=tenant%3D$tenant,app%3Dwls-admin" | grep \"podIP\" | head -n 1 | cut -d ':' -f 2 | tr -d '"' | tr -d ','|tr -d ' ')
+tenant=$(curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/wls/pods/$HOSTNAME" | grep tenant | cut -d ':' -f 2 | tr -d '"' | tr -d ',' | tr -d ' ')
+ADMIN_HOST=$(curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/wls/pods?labelSelector=tenant%3D$tenant,app%3Dwls-admin" | grep \"podIP\" | head -n 1 | cut -d ':' -f 2 | tr -d '"' | tr -d ','|tr -d ' ')
 echo $ADMIN_HOST
-#else
-#   echo "      ----> 'weblogic' admin host: ${ADMIN_HOST}"
-#fi
 
 MS_NAME=$HOSTNAME
 NM_NAME=nm_$HOSTNAME
