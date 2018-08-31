@@ -42,3 +42,4 @@ Dev Notes
 2. first one is under oic-docker. Build it with build.sh
 3. Next one is a maven module. build it with mvn clean install -Pdocker
 4. Delete the pods to recreate with latest images. Delete deployments to restart.
+5. Enable add-machine.py and add-server.py to revert to controller less coordination
