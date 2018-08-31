@@ -1,0 +1,51 @@
+apiVersion: metacontroller.k8s.io/v1alpha1
+kind: DecoratorController
+metadata:
+  name: wls-controller
+  namespace: wls
+spec:
+  resources:
+  - apiVersion: v1
+    resource: pods
+    labelSelector:
+      matchExpressions:
+      - {key: tenant, operator: Exists}
+  hooks:
+    sync:
+      webhook:
+        url: http://wls-controller.wls/wls/controller
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: wls-controller
+  namespace: wls
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wls-controller
+  template:
+    metadata:
+      labels:
+        app: wls-controller
+    spec:
+      serviceAccountName: wls
+      containers:
+      - name: hooks
+        image: phx.ocir.io/oicpaas1/sumagant/wls-controller:latest
+        imagePullPolicy: Always
+      imagePullSecrets:
+      - name: k8s-pull
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wls-controller
+  namespace: wls
+spec:
+  selector:
+    app: wls-controller
+  ports:
+  - port: 80
+    targetPort: 8080

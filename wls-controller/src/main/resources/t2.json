@@ -1,0 +1,141 @@
+{
+  "kind": "PodList",
+  "apiVersion": "v1",
+  "metadata": {
+    "selfLink": "/api/v1/namespaces/wls/pods/",
+    "resourceVersion": "1398797"
+  },
+  "items": [
+    {
+      "metadata": {
+        "name": "wls-admin-f6d7b7dfd-bnft7",
+        "generateName": "wls-admin-f6d7b7dfd-",
+        "namespace": "wls",
+        "selfLink": "/api/v1/namespaces/wls/pods/wls-admin-f6d7b7dfd-bnft7",
+        "uid": "50a333e4-aa7c-11e8-87ad-0a580aed628a",
+        "resourceVersion": "911211",
+        "creationTimestamp": "2018-08-28T04:39:14Z",
+        "labels": {
+          "app": "wls-admin",
+          "pod-template-hash": "928363898",
+          "tenant": "t1"
+        },
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "kind": "ReplicaSet",
+            "name": "wls-admin-f6d7b7dfd",
+            "uid": "509f8067-aa7c-11e8-87ad-0a580aed628a",
+            "controller": true,
+            "blockOwnerDeletion": true
+          }
+        ]
+      },
+      "spec": {
+        "volumes": [
+          {
+            "name": "wls-token-c7fjh",
+            "secret": {
+              "secretName": "wls-token-c7fjh",
+              "defaultMode": 420
+            }
+          }
+        ],
+        "containers": [
+          {
+            "name": "wls-admin",
+            "image": "phx.ocir.io/oicpaas1/sumagant/wls-domain:12.2.1.3",
+            "resources": {},
+            "volumeMounts": [
+              {
+                "name": "wls-token-c7fjh",
+                "readOnly": true,
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+              }
+            ],
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "imagePullPolicy": "Always"
+          }
+        ],
+        "restartPolicy": "Always",
+        "terminationGracePeriodSeconds": 30,
+        "dnsPolicy": "ClusterFirst",
+        "serviceAccountName": "wls",
+        "serviceAccount": "wls",
+        "nodeName": "129.146.68.229",
+        "securityContext": {},
+        "imagePullSecrets": [
+          {
+            "name": "k8s-pull"
+          }
+        ],
+        "schedulerName": "default-scheduler",
+        "tolerations": [
+          {
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "effect": "NoExecute",
+            "tolerationSeconds": 300
+          },
+          {
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "effect": "NoExecute",
+            "tolerationSeconds": 300
+          }
+        ],
+        "priority": 0
+      },
+      "status": {
+        "phase": "Running",
+        "conditions": [
+          {
+            "type": "Initialized",
+            "status": "True",
+            "lastProbeTime": null,
+            "lastTransitionTime": "2018-08-28T04:39:14Z"
+          },
+          {
+            "type": "Ready",
+            "status": "True",
+            "lastProbeTime": null,
+            "lastTransitionTime": "2018-08-28T04:39:42Z"
+          },
+          {
+            "type": "ContainersReady",
+            "status": "True",
+            "lastProbeTime": null,
+            "lastTransitionTime": null
+          },
+          {
+            "type": "PodScheduled",
+            "status": "True",
+            "lastProbeTime": null,
+            "lastTransitionTime": "2018-08-28T04:39:14Z"
+          }
+        ],
+        "hostIP": "10.0.12.17",
+        "podIP": "10.244.0.16",
+        "startTime": "2018-08-28T04:39:14Z",
+        "containerStatuses": [
+          {
+            "name": "wls-admin",
+            "state": {
+              "running": {
+                "startedAt": "2018-08-28T04:39:41Z"
+              }
+            },
+            "lastState": {},
+            "ready": true,
+            "restartCount": 0,
+            "image": "phx.ocir.io/oicpaas1/sumagant/wls-domain:12.2.1.3",
+            "imageID": "docker-pullable://phx.ocir.io/oicpaas1/sumagant/wls-domain@sha256:14095b4b301e5d60cd80e64127c89546eed28dd4dbd52ea9bf1eb937e4d5ca97",
+            "containerID": "docker://a6a6fb423b954aac9965f00dd91484c49e2882d8e89bfc35fc5c06b115166d45"
+          }
+        ],
+        "qosClass": "BestEffort"
+      }
+    }
+  ]
+}

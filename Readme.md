@@ -66,16 +66,16 @@ TODO:
 1. Locate admin server pod ip based on pod labels
 2. Push machine and managed server creation logic to wls-controller
 3. Figure login problem via ingress/proxy
-http://localhost:8001/api/v1/namespaces/wls1/services/http:wls-admin:/proxy/console
-http://localhost:8001/api/v1/namespaces/wls1/services/http:wls-admin:/proxy/management/weblogic/12.2.1.3.0/domainRuntime/serverRuntimes/wls-ms1
+http://localhost:8001/api/v1/namespaces/wls/services/http:wls-admin:/proxy/console
+http://localhost:8001/api/v1/namespaces/wls/services/http:wls-admin:/proxy/management/weblogic/12.2.1.3.0/domainRuntime/serverRuntimes/wls-ms1
 curl https://www.sumanganta.com/wls-admin/management/weblogic/12.2.1.3.0/domainRuntime/serverRuntimes/wls-ms1 -v -u weblogic:welcome1 (works)
 4. Create domain in the image using oic template
 5. Add ingress route to the managed server
 
 
 KUBE_TOKEN=$(</var/run/secrets/kubernetes.io/serviceaccount/token)
-curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/wls1/pods/$HOSTNAME
-curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/wls1/pods?labelSelector=tenant%3Dt1&fieldSelector=status
+curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/wls/pods/$HOSTNAME
+curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/wls/pods?labelSelector=tenant%3Dt1&fieldSelector=status
 
 ----
 
@@ -85,8 +85,8 @@ Demo
 #manifests - images, labels
 
 #scale
-kubectl -n wls1 get pods
-kubectl scale deployment wls-ms1 -n wls1 --replicas=3
+kubectl -n wls get pods
+kubectl scale deployment wls-ms -n wls --replicas=3
 
 #servers
 curl https://www.sumanganta.com/wls-admin/management/weblogic/12.2.1.3.0/domainConfig/servers -u weblogic:welcome1 | jq .items[].identity

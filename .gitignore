@@ -1,0 +1,17 @@
+**.idea
+target
+.classpath
+.project
+.settings
+.metadata
+dependency-reduced-pom.xml
+faces-config.NavData
+*.iml
+*.sublime-project
+*.sublime-workspace
+*.h2.db
+*.lock.db
+**/overlays
+
+*.DS_Store
+

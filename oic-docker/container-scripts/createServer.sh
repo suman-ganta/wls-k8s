@@ -75,10 +75,10 @@ nohup $NM_DIR/startNodeManager.sh > /u01/oracle/log_$MS_NAME.nm 2>&1 &
 echo "NodeManager started."
 
 # Add this 'Machine' and 'ManagedServer' to the AdminServer only if 1st execution
-if [ $ADD_SERVER -eq 1 ]; then
-  wlst /u01/oracle/add-machine.py
-  wlst /u01/oracle/add-server.py
-fi
+# if [ $ADD_SERVER -eq 1 ]; then
+#   wlst /u01/oracle/add-machine.py
+#   wlst /u01/oracle/add-server.py
+# fi
 
 # print log
 tail -f /u01/oracle/log_$MS_NAME.nm $DOMAIN_HOME/servers/$MS_NAME/logs/*.out
