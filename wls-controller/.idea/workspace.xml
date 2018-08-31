@@ -2,70 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dc444486-f4dc-4cfd-813c-1217a479b481" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/build.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/container-scripts/add-machine.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/container-scripts/add-server.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/container-scripts/commonfuncs.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/container-scripts/create-wls-domain.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/container-scripts/createAndStartWLSDomain.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/container-scripts/createMachine.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/container-scripts/createServer.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/container-scripts/domain.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/container-scripts/get-admin-server.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/container-scripts/waitForAdminServer.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/container-scripts/wlst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/k8s/ms.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../oic-docker/k8s/wls-admin.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/thriftCompiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Readme.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/oracle/oic/wlscontroller/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/oracle/oic/wlscontroller/WlsClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/oracle/oic/wlscontroller/WlsController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/oracle/oic/wlscontroller/models2/Labels.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/oracle/oic/wlscontroller/models2/Metadata.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/oracle/oic/wlscontroller/models2/Parent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/oracle/oic/wlscontroller/models2/Pod.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/oracle/oic/wlscontroller/models2/PodList.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/oracle/oic/wlscontroller/models2/Status.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/hooks/sync-pod-name-label.jsonnet" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/hooks/sync-service-per-pod.jsonnet" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/my-statefulset.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/t2.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/test.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/testcontroller.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/testpod.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/wls-controller.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/oracle/oic/wlscontroller/test/MyResourceTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/../Readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/build.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/container-scripts/add-machine.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/container-scripts/add-server.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/container-scripts/commonfuncs.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/container-scripts/create-wls-domain.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/container-scripts/createAndStartWLSDomain.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/container-scripts/createMachine.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/container-scripts/createServer.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/container-scripts/domain.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/container-scripts/get-admin-server.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/container-scripts/waitForAdminServer.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/container-scripts/wlst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../k8s/ms.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../k8s/wls-admin.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/Readme.md" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -90,7 +28,7 @@
           <entry key="md" value="2" />
           <entry key="pom" value="1" />
           <entry key="xml" value="1" />
-          <entry key="yaml" value="1" />
+          <entry key="yaml" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
@@ -100,14 +38,14 @@
           <entry key="JSON" value="5" />
           <entry key="PLAIN_TEXT" value="2" />
           <entry key="XML" value="2" />
-          <entry key="YAML" value="1" />
+          <entry key="YAML" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="java" value="5014" />
           <entry key="json" value="8" />
-          <entry key="md" value="645" />
+          <entry key="md" value="673" />
           <entry key="xml" value="11" />
         </counts>
       </usages-collector>
@@ -115,7 +53,7 @@
         <counts>
           <entry key="JAVA" value="5014" />
           <entry key="JSON" value="8" />
-          <entry key="PLAIN_TEXT" value="645" />
+          <entry key="PLAIN_TEXT" value="673" />
           <entry key="XML" value="11" />
         </counts>
       </usages-collector>
@@ -157,18 +95,6 @@
               <caret line="153" column="5" lean-forward="true" selection-start-line="153" selection-start-column="5" selection-end-line="153" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/t2.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="84">
-              <caret line="4" column="35" selection-start-line="4" selection-start-column="35" selection-end-line="4" selection-end-column="35" />
-              <folding>
-                <element signature="e#989#2608#0" />
               </folding>
             </state>
           </provider>
@@ -232,11 +158,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Readme.md">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="336">
-              <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+            <state relative-caret-position="433">
+              <caret line="21" selection-start-line="21" selection-end-line="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/wls-controller.yaml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="294">
+              <caret line="35" column="66" lean-forward="true" selection-start-line="35" selection-start-column="45" selection-end-line="35" selection-end-column="66" />
             </state>
           </provider>
         </entry>
@@ -349,6 +284,24 @@
             <path>
               <item name="wls-controller" type="b2602c69:ProjectViewProjectNode" />
               <item name="wls-controller" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="wls-controller" type="b2602c69:ProjectViewProjectNode" />
+              <item name="wls-controller" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="wls-controller" type="b2602c69:ProjectViewProjectNode" />
+              <item name="wls-controller" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="wls-controller" type="b2602c69:ProjectViewProjectNode" />
+              <item name="wls-controller" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -650,13 +603,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/wls-controller.yaml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="17" column="24" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/t2.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="84">
@@ -807,8 +753,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Readme.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+        <state relative-caret-position="433">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/wls-controller.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="35" column="66" lean-forward="true" selection-start-line="35" selection-start-column="45" selection-end-line="35" selection-end-column="66" />
         </state>
       </provider>
     </entry>

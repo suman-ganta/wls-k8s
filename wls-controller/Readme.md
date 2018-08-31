@@ -1,3 +1,4 @@
+##Summary
 This is metacontroller lambda function to keep admin server in sync with managed server pods.
 
 Currently it supports the following -
@@ -9,8 +10,13 @@ Registration involves -
 
 managed server pod takes care of bringing up node manager.
 
-TODO:
+##TODO:
 1. Wait for admin server to come up
 2. If admin pod is not found, return
 3. If admin server is created, locate all managed servers and register them
 4. On managed server deletion, remove it from admin server domain.
+
+
+##References
+WLS REST APIs
+https://docs.oracle.com/middleware/1221/wls/WLRUR/examples.htm#WLRUR197
