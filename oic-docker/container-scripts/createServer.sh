@@ -9,11 +9,11 @@ echo "Domain Home: " $DOMAIN_HOME
 echo "Managed Server Name: "  $MS_NAME
 echo "NodeManager Name: "  $NM_NAME
 
-echo "Locate admin server"
-KUBE_TOKEN=$(</var/run/secrets/kubernetes.io/serviceaccount/token)
-tenant=$(curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/wls/pods/$HOSTNAME" | grep tenant | cut -d ':' -f 2 | tr -d '"' | tr -d ',' | tr -d ' ')
-ADMIN_HOST=$(curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/wls/pods?labelSelector=tenant%3D$tenant,app%3Dwls-admin" | grep \"podIP\" | head -n 1 | cut -d ':' -f 2 | tr -d '"' | tr -d ','|tr -d ' ')
-echo $ADMIN_HOST
+#echo "Locate admin server"
+#KUBE_TOKEN=$(</var/run/secrets/kubernetes.io/serviceaccount/token)
+#tenant=$(curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/wls/pods/$HOSTNAME" | grep tenant | cut -d ':' -f 2 | tr -d '"' | tr -d ',' | tr -d ' ')
+#ADMIN_HOST=$(curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/wls/pods?labelSelector=tenant%3D$tenant,app%3Dwls-admin" | grep \"podIP\" | head -n 1 | cut -d ':' -f 2 | tr -d '"' | tr -d ','|tr -d ' ')
+#echo $ADMIN_HOST
 
 MS_NAME=$HOSTNAME
 NM_NAME=nm_$HOSTNAME

@@ -1,6 +1,7 @@
 package oracle.oic.wlscontroller;
 
 import oracle.oic.wlscontroller.models2.Pod;
+import oracle.oic.wlscontroller.models2.wls.ServersStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,10 +16,10 @@ import java.util.Base64;
 
 public class WlsClient {
   private final String baseUri;
-  private final Pod pod;
+  private Pod pod;
   private final String adminServer;
   private Client c;
-  private static Logger LOG = LoggerFactory.getLogger("oracle.oic.wlscontroller");
+  private static Logger LOG = LoggerFactory.getLogger("wlscontroller");
   final String REQUESTED_BY = "X-Requested-By";
 
   public WlsClient(String adminServer, Pod pod){
@@ -29,6 +30,10 @@ public class WlsClient {
     c = ClientBuilder.newClient();
     String token = Base64.getEncoder().encodeToString("weblogic:welcome1".getBytes());
     c.register((ClientRequestFilter) requestContext -> requestContext.getHeaders().add(HttpHeaders.AUTHORIZATION, "Basic " + token));
+  }
+
+  public void setPod(Pod p){
+    this.pod = p;
   }
 
   public void startEdit(){
@@ -83,7 +88,7 @@ public class WlsClient {
     }
   }
 
-  public void createServerIfNotExists(){
+  public boolean createServerIfNotExists(){
     String serverName = pod.getMetadata().getName();
     String machineName = "machine_" + pod.getMetadata().getName();
 
@@ -93,7 +98,7 @@ public class WlsClient {
         .get();
     if (response.getStatus() != 404) {
       LOG.info("Server: " + serverName + " already exists");
-      return;
+      return false;
     }
 
     //2. create server
@@ -121,6 +126,21 @@ public class WlsClient {
       LOG.info(resp);
       throw new RuntimeException("Failed to set properties: " + serverName);
     }
+    return true;
+  }
+
+  public void deleteServerIfNotExists(){
+    String serverName = pod.getMetadata().getName();
+
+    //1. check if server exists
+    Response response = c.target(baseUri).path("edit/servers").path(serverName)
+        .request().header(REQUESTED_BY, pod.getMetadata().getName())
+        .get();
+    if (response.getStatus() != 404) {
+      c.target(baseUri).path("edit/servers").path(serverName)
+          .request().header(REQUESTED_BY, pod.getMetadata().getName())
+          .delete();
+    }
   }
 
   public String showServer(){
@@ -129,7 +149,22 @@ public class WlsClient {
     return response.readEntity(String.class);
   }
 
-  public void createMachineIfNotExists(){
+  public void deleteMachineIfNotExists(){
+    String machineName = "machine_" + pod.getMetadata().getName();
+
+    //1. check if machine exists
+    Response response = c.target(baseUri).path("edit/machines").path(machineName)
+        .request().header(REQUESTED_BY, pod.getMetadata().getName())
+        .get();
+    if (response.getStatus() != 404) {
+      c.target(baseUri).path("edit/machines").path(machineName)
+          .request().header(REQUESTED_BY, pod.getMetadata().getName())
+          .delete();
+    }
+  }
+
+
+  public boolean createMachineIfNotExists(){
     String machineName = "machine_" + pod.getMetadata().getName();
 
     //1. check if machine exists
@@ -138,7 +173,7 @@ public class WlsClient {
         .get();
     if (response.getStatus() != 404) {
       LOG.info("Machine: " + machineName + " already exists");
-      return;
+      return false;
     }
 
     //2. create machine
@@ -159,13 +194,14 @@ public class WlsClient {
       LOG.error("Failed to set node manager listen address: " + machineName);
       throw new RuntimeException("Failed to set node manager listen address: " + machineName);
     }
+    return true;
   }
 
-  public String getServers(){
+  public ServersStatus getServers(){
     Response response = c.target(baseUri).path("domainRuntime/serverLifeCycleRuntimes")
         .queryParam("links", "none")
         .queryParam("fields", "name,state")
         .request().get();
-    return response.readEntity(String.class);
+    return response.readEntity(ServersStatus.class);
   }
 }

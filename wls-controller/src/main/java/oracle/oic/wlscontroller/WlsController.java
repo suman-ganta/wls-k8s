@@ -1,9 +1,8 @@
 package oracle.oic.wlscontroller;
 
-import oracle.oic.wlscontroller.models2.Labels;
-import oracle.oic.wlscontroller.models2.Parent;
-import oracle.oic.wlscontroller.models2.Pod;
-import oracle.oic.wlscontroller.models2.PodList;
+import oracle.oic.wlscontroller.models2.*;
+import oracle.oic.wlscontroller.models2.wls.ServerStatus;
+import oracle.oic.wlscontroller.models2.wls.ServersStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.nio.file.Paths;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -28,7 +29,7 @@ import java.util.Scanner;
 @Path("controller")
 public class WlsController {
 
-  private static Logger LOG = LoggerFactory.getLogger("oracle.oic.wlscontroller");
+  private static Logger LOG = LoggerFactory.getLogger("wlscontroller");
   private final String WLS_ADMIN = "wls-admin";
   private final String WLS_MS = "wls-ms";
   private final String TOKEN_LOC = "/var/run/secrets/kubernetes.io/serviceaccount/token";
@@ -43,12 +44,13 @@ public class WlsController {
   @Consumes(MediaType.APPLICATION_JSON)
   public Response podNotification(Parent parent) {
     //LOG.info("Parent: " + parent);
+    final Response response = Response.ok("{\"labels\":{}}").build();
     final Pod pod = parent.getPod();
     if(pod == null) return null;
 
     //check if pod is ready
     if (!"Running".equals(pod.getStatus().getPhase())) {
-      return null;
+      return response;
     }
     final Labels labels = pod.getMetadata().getLabels();
     final String app = labels.getApp();
@@ -60,7 +62,8 @@ public class WlsController {
       LOG.info("Managed Server: " + pod.getMetadata().getName());
       registerToAdmin(pod);
     }
-    return Response.ok(pod).build();
+    //no new labels or annotations
+    return response;
   }
 
   private void registerOrphanServers(Pod adminPod) {
@@ -75,7 +78,7 @@ public class WlsController {
       if (!pod.getMetadata().getName().equals(adminPod.getMetadata().getName())) {
         LOG.error(
             String.format("There is an active admin server '%s' running "
-                + "for the tenant '%s'. Ignoring this (%s) server",
+                + "for tenant '%s'. Ignoring this (%s) server",
                 pod.getMetadata().getName(), tenant, adminPod.getMetadata().getName()));
       }
     }
@@ -84,6 +87,28 @@ public class WlsController {
     if(managedPods != null) {
       final String adminPodIP = adminPod.getStatus().getPodIP();
       ensureAdminServer();
+
+      //clean-up dead managed pods registered to this admin server
+      WlsClient wlsClient = new WlsClient(adminPod.getStatus().getPodIP(), null);
+      final ServersStatus registeredServers = wlsClient.getServers();
+      Map<String, Pod> currentManagedPods = new HashMap<>();
+      for (Pod managedPod : managedPods) {
+        currentManagedPods.put(managedPod.getMetadata().getName(), managedPod);
+      }
+      for (ServerStatus item : registeredServers.getItems()) {
+        if (!item.getName().equals("AdminServer") && !currentManagedPods.containsKey(item.getName())) {
+          //this pod is gone, remove it.
+          LOG.info("Removing unavailable managed pod " + item.getName());
+          Pod deletedPod = new Pod();
+          final Metadata metadata = new Metadata();
+          metadata.setName(item.getName());
+          deletedPod.setMetadata(metadata);
+          wlsClient.setPod(deletedPod);
+          wlsClient.deleteMachineIfNotExists();
+          wlsClient.deleteServerIfNotExists();
+        }
+      }
+
       for (Pod managedPod : managedPods) {
         registerManagedPod(adminPodIP, managedPod);
       }
@@ -121,13 +146,14 @@ public class WlsController {
       //1. start edit session
       wlsClient.startEdit();
       //2. create machine
-      wlsClient.createMachineIfNotExists();
-      //3. create server
-      wlsClient.createServerIfNotExists();
-      //4. activate changes.
-      wlsClient.activate();
-      LOG.info("starting server..");
-      wlsClient.startServer();
+      if(wlsClient.createMachineIfNotExists()) {
+        //3. create server
+        wlsClient.createServerIfNotExists();
+        //4. activate changes.
+        wlsClient.activate();
+        LOG.info("starting server..");
+        wlsClient.startServer();
+      }
       LOG.info("STATUS: " + wlsClient.getServers());
     } catch (RuntimeException e) {
       LOG.error(e.getMessage(), e);
