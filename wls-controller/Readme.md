@@ -11,10 +11,7 @@ Registration involves -
 managed server pod takes care of bringing up node manager.
 
 ##TODO:
-1. Wait for admin server to come up
-2. If admin pod is not found, return
-3. If admin server is created, locate all managed servers and register them
-4. On managed server deletion, remove it from admin server domain.
+1. On managed server deletion, remove it from admin server domain.
 
 
 ##References

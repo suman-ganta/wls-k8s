@@ -27,6 +27,7 @@ public class Main {
     public static HttpServer startServer() {
         ResourceConfig config = new ResourceConfig();
         config.registerClasses(WlsController.class);
+        config.registerClasses(DebugController.class);
         config.register(JacksonFeature.class);
 
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), config);

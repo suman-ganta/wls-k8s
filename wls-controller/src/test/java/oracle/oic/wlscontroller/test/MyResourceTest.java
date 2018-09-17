@@ -44,6 +44,6 @@ public class MyResourceTest {
     @Test
     public void testGetIt() {
         String responseMsg = target.path("controller").request().get(String.class);
-        assertEquals("{\"Hello\" : \"world\"}", responseMsg);
+        assertEquals("{\"controller\" : \"WlsController\"}", responseMsg);
     }
 }

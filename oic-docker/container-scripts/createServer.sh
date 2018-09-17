@@ -36,9 +36,6 @@ if [ ! -f /u01/oracle/log_$MS_NAME.nm ]; then
     ADD_SERVER=1
 fi
 
-# Wait for AdminServer to become available for any subsequent operation
-/u01/oracle/waitForAdminServer.sh
-
 # Set and Start Node Manager
 echo "Setting NodeManager"
 if [ -z $NM_NAME ]; then
@@ -73,6 +70,9 @@ sed -i -e "s|LogFile=$|$LOGFILE_STR|g" $NM_DIR/nodemanager.properties
 echo "Starting NodeManager in background..."
 nohup $NM_DIR/startNodeManager.sh > /u01/oracle/log_$MS_NAME.nm 2>&1 &
 echo "NodeManager started."
+
+# Wait for AdminServer to become available for any subsequent operation
+# /u01/oracle/waitForAdminServer.sh
 
 # Add this 'Machine' and 'ManagedServer' to the AdminServer only if 1st execution
 # if [ $ADD_SERVER -eq 1 ]; then

@@ -20,22 +20,14 @@ kubectl scale deployment wls-ms -n wls --replicas=2
 3. Cluster: DockerCluster
 4. Managed server port - 8001
 
-#Check the status of managed server
-http://localhost:7001/management/weblogic/latest/domainRuntime/serverRuntimes/wls-ms -u weblogic:welcome1
+##Servers and Machines
+curl -k -u weblogic:welcome1 'https://www.sumanganta.com/wls-admin/management/weblogic/latest/domainConfig/servers?links=none&fields=machine,identity' | jq
 
-curl https://www.sumanganta.com/wls-admin/management/weblogic/latest/domainRuntime/serverRuntimes/wls-ms -v -u weblogic:welcome1
+##States
+curl -k -u weblogic:welcome1 'https://www.sumanganta.com/wls-admin/management/weblogic/latest/domainRuntime/serverLifeCycleRuntimes?links=none&fields=name,state' | jq
 
 ##TODO
 Figure login problem via ingress/proxy
-
-##servers
-curl https://www.sumanganta.com/wls-admin/management/weblogic/12.2.1.3.0/domainConfig/servers -u weblogic:welcome1 | jq .items[].identity
-
-##machines
-curl https://www.sumanganta.com/wls-admin/management/weblogic/12.2.1.3.0/domainConfig/servers -u weblogic:welcome1 | jq .items[].machine
-
-##states
-curl https://www.sumanganta.com/wls-admin/management/weblogic/12.2.1.3.0/domainRuntime/serverRuntimes/wls-ms1-8499c74977-j8q77 -u weblogic:welcome1 | jq .state
 
 Dev Notes
 1. There are two images, wls-domain:12.2.1.3 and wls-controller:latest
