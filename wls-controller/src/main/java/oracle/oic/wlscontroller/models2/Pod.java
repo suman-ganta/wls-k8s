@@ -31,6 +31,10 @@ public class Pod {
     this.status = status;
   }
 
+  public boolean isRunning(){
+    return status != null && "Running".equals(status.getPhase());
+  }
+
   @Override public String toString() {
     return String.format("\"%s\" : {\"%s\" : %s, \"%s\" : %s}", "object", "metadata", metadata.toString(), "status", status.toString());
   }

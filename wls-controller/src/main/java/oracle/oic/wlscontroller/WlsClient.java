@@ -74,7 +74,7 @@ public class WlsClient {
         .post(Entity.json("{}"));
     if (response.getStatus() != 202) {
       LOG.info("response: " + response.getStatus());
-      LOG.info("body: " + response.readEntity(String.class));
+      LOG.trace("body: " + response.readEntity(String.class));
       throw new RuntimeException("Startup request failed");
     }
   }
@@ -97,7 +97,7 @@ public class WlsClient {
         .request().header(REQUESTED_BY, pod.getMetadata().getName())
         .get();
     if (response.getStatus() != 404) {
-      LOG.info("Server: " + serverName + " already exists");
+      LOG.trace("Server: " + serverName + " already exists");
       return false;
     }
 
@@ -123,7 +123,7 @@ public class WlsClient {
     if (response.getStatus() != 200) {
       final String resp = response.readEntity(String.class);
       LOG.error("Failed to set properties: " + serverName);
-      LOG.info(resp);
+      LOG.trace(resp);
       throw new RuntimeException("Failed to set properties: " + serverName);
     }
     return true;
@@ -137,14 +137,20 @@ public class WlsClient {
         .request().header(REQUESTED_BY, pod.getMetadata().getName())
         .get();
     if (response.getStatus() != 404) {
-      c.target(baseUri).path("edit/servers").path(serverName)
+      //remove machine association first
+      response = c.target(baseUri).path("edit/servers").path(serverName)
+          .request().header(REQUESTED_BY, pod.getMetadata().getName())
+          .post(Entity.entity("{\"machine\" : [ \"machines\", \"\" ], \"cluster\" : [ \"clusters\", \"\" ]}", MediaType.APPLICATION_JSON));
+      LOG.trace("Remove association with machine: " + response.getStatus() + " - " + response.readEntity(String.class));
+      response = c.target(baseUri).path("edit/servers").path(serverName)
           .request().header(REQUESTED_BY, pod.getMetadata().getName())
           .delete();
+      LOG.trace("Delete server: " + response.getStatus() + " - " + response.readEntity(String.class));
     }
   }
 
   public String showServer(){
-    LOG.info("Server details");
+    LOG.trace("Server details");
     Response response = c.target(baseUri).path("edit/servers").path(pod.getMetadata().getName()).request().get();
     return response.readEntity(String.class);
   }
@@ -157,9 +163,10 @@ public class WlsClient {
         .request().header(REQUESTED_BY, pod.getMetadata().getName())
         .get();
     if (response.getStatus() != 404) {
-      c.target(baseUri).path("edit/machines").path(machineName)
+      response = c.target(baseUri).path("edit/machines").path(machineName)
           .request().header(REQUESTED_BY, pod.getMetadata().getName())
           .delete();
+      LOG.trace("Delete machine: " + response.getStatus() + " - " + response.readEntity(String.class));
     }
   }
 
@@ -172,7 +179,7 @@ public class WlsClient {
         .request().header(REQUESTED_BY, pod.getMetadata().getName())
         .get();
     if (response.getStatus() != 404) {
-      LOG.info("Machine: " + machineName + " already exists");
+      LOG.trace("Machine: " + machineName + " already exists");
       return false;
     }
 
@@ -181,7 +188,7 @@ public class WlsClient {
         .request().header(REQUESTED_BY, pod.getMetadata().getName())
         .post(Entity.entity(String.format("{\"name\" : \"%s\"}", machineName), MediaType.APPLICATION_JSON));
     if (response.getStatus() != 201) {
-      LOG.error(String.format("code: %d, response: %s", response.getStatus(), response.readEntity(String.class)));
+      LOG.trace(String.format("code: %d, response: %s", response.getStatus(), response.readEntity(String.class)));
       LOG.error("Failed to create machine: " + machineName);
       throw new RuntimeException("Failed to create machine: " + machineName);
     }

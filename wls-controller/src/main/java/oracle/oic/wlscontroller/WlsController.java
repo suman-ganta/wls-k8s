@@ -32,6 +32,7 @@ public class WlsController {
   private static Logger LOG = LoggerFactory.getLogger("wlscontroller");
   private final String WLS_ADMIN = "wls-admin";
   private final String WLS_MS = "wls-ms";
+  private final String ADMIN_SERVER_NAME = "AdminServer";
   private final String TOKEN_LOC = "/var/run/secrets/kubernetes.io/serviceaccount/token";
 
   @GET @Produces(MediaType.APPLICATION_JSON)
@@ -43,23 +44,23 @@ public class WlsController {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public Response podNotification(Parent parent) {
-    //LOG.info("Parent: " + parent);
+    LOG.trace("Parent: " + parent);
     final Response response = Response.ok("{\"labels\":{}}").build();
     final Pod pod = parent.getPod();
     if(pod == null) return null;
 
     //check if pod is ready
-    if (!"Running".equals(pod.getStatus().getPhase())) {
+    if (!pod.isRunning()) {
       return response;
     }
     final Labels labels = pod.getMetadata().getLabels();
     final String app = labels.getApp();
 
     if (WLS_ADMIN.equals(app)) {
-      LOG.info("Admin Server: " + pod.getMetadata().getName());
+      LOG.debug("Admin Server: " + pod.getMetadata().getName());
       registerOrphanServers(pod);
     } else {
-      LOG.info("Managed Server: " + pod.getMetadata().getName());
+      LOG.debug("Managed Server: " + pod.getMetadata().getName());
       registerToAdmin(pod);
     }
     //no new labels or annotations
@@ -76,7 +77,7 @@ public class WlsController {
     }
     for (Pod pod : adminPods) {
       if (!pod.getMetadata().getName().equals(adminPod.getMetadata().getName())) {
-        LOG.error(
+        LOG.info(
             String.format("There is an active admin server '%s' running "
                 + "for tenant '%s'. Ignoring this (%s) server",
                 pod.getMetadata().getName(), tenant, adminPod.getMetadata().getName()));
@@ -86,26 +87,27 @@ public class WlsController {
     final List<Pod> managedPods = findTenantPods(adminPod, WLS_MS);
     if(managedPods != null) {
       final String adminPodIP = adminPod.getStatus().getPodIP();
-      ensureAdminServer();
 
       //clean-up dead managed pods registered to this admin server
       WlsClient wlsClient = new WlsClient(adminPod.getStatus().getPodIP(), null);
       final ServersStatus registeredServers = wlsClient.getServers();
       Map<String, Pod> currentManagedPods = new HashMap<>();
+      LOG.debug("Existing managed pods..");
       for (Pod managedPod : managedPods) {
+        LOG.debug(managedPod.getMetadata().getName() + "-> " + managedPod.getStatus());
         currentManagedPods.put(managedPod.getMetadata().getName(), managedPod);
       }
       for (ServerStatus item : registeredServers.getItems()) {
-        if (!item.getName().equals("AdminServer") && !currentManagedPods.containsKey(item.getName())) {
+        if (shouldDelete(item.getName(), currentManagedPods)) {
           //this pod is gone, remove it.
-          LOG.info("Removing unavailable managed pod " + item.getName());
+          LOG.debug("Removing unavailable managed pod " + item.getName());
           Pod deletedPod = new Pod();
           final Metadata metadata = new Metadata();
           metadata.setName(item.getName());
           deletedPod.setMetadata(metadata);
           wlsClient.setPod(deletedPod);
-          wlsClient.deleteMachineIfNotExists();
           wlsClient.deleteServerIfNotExists();
+          wlsClient.deleteMachineIfNotExists();
         }
       }
 
@@ -115,18 +117,15 @@ public class WlsController {
     }
   }
 
-  //FIXME
-  private void ensureAdminServer() {
-    try {
-      Thread.sleep(5000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+  private boolean shouldDelete(String podName, Map<String, Pod> managedPods){
+    if(podName.equals(ADMIN_SERVER_NAME)) return false;
+    final Pod managedPod = managedPods.get(podName);
+    return managedPod == null || !managedPod.isRunning();
   }
 
   private void registerToAdmin(Pod msPod) {
     String adminServer = getAdminServerFor(msPod);
-    LOG.info(String.format("Admin server for '%s' is '%s'", msPod.getMetadata().getName(), adminServer));
+    LOG.debug(String.format("Admin server for '%s' is '%s'", msPod.getMetadata().getName(), adminServer));
     if (adminServer == null) {
       return;
     }
@@ -139,7 +138,7 @@ public class WlsController {
   }
 
   private void registerManagedPod(String adminServer, Pod managedPod) {
-    LOG.info(String.format("Registering '%s' to '%s'", managedPod.getMetadata().getName(), adminServer));
+    LOG.debug(String.format("Registering '%s' to '%s'", managedPod.getMetadata().getName(), adminServer));
     WlsClient wlsClient = new WlsClient(adminServer, managedPod);
 
     try {
@@ -151,10 +150,11 @@ public class WlsController {
         wlsClient.createServerIfNotExists();
         //4. activate changes.
         wlsClient.activate();
-        LOG.info("starting server..");
+        LOG.debug("starting server..");
         wlsClient.startServer();
+        LOG.info(String.format("Registered '%s' to '%s'", managedPod.getMetadata().getName(), adminServer));
       }
-      LOG.info("STATUS: " + wlsClient.getServers());
+      LOG.debug("STATUS: " + wlsClient.getServers());
     } catch (RuntimeException e) {
       LOG.error(e.getMessage(), e);
       wlsClient.cancelEdit();
@@ -166,11 +166,11 @@ public class WlsController {
     String tenant = managedPod.getMetadata().getLabels().getTenant();
     final List<Pod> pods = findTenantPods(managedPod, WLS_ADMIN);
     if (pods != null) {
-      LOG.info("Admin PODs" + pods);
+      LOG.debug("Admin PODs" + pods);
       if(pods.size() > 1){
-        LOG.error("Found more than one admin server pods for the tenant: " + tenant);
+        LOG.debug("Found more than one admin server pods for the tenant: " + tenant);
       } else if (pods.size() == 0) {
-        LOG.error("No admin server pod for the tenant: " + tenant);
+        LOG.info("No admin server pod for the tenant: " + tenant);
         return null;
       }
 
@@ -190,7 +190,7 @@ public class WlsController {
     }
     String port = System.getenv("KUBERNETES_PORT_443_TCP_PORT");
     String baseUri = String.format("https://%s:%s/api/v1/namespaces/%s/pods/", apiServer, port, namespace);
-    LOG.info("API Server: " + baseUri);
+    LOG.trace("API Server: " + baseUri);
     final Client client = getClient();
     PodList podList = client.target(baseUri)
         .queryParam("labelSelector", "tenant%3D" + tenant + ",app%3D" + label)
@@ -201,9 +201,7 @@ public class WlsController {
 
   private Client getClient(){
     try {
-
       SSLContext sslcontext = SSLContext.getInstance("TLS");
-
       sslcontext.init(null, new TrustManager[] {
           new X509TrustManager() {
             public void checkClientTrusted(X509Certificate[] arg0, String arg1) {

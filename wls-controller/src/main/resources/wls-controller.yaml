@@ -10,6 +10,7 @@ spec:
     labelSelector:
       matchExpressions:
       - {key: tenant, operator: Exists}
+  resyncPeriodSeconds: 30
   hooks:
     sync:
       webhook:
@@ -35,6 +36,9 @@ spec:
       - name: hooks
         image: phx.ocir.io/oicpaas1/sumagant/wls-controller:latest
         imagePullPolicy: Always
+        env:
+        - name: v
+          value: INFO
       imagePullSecrets:
       - name: k8s-pull
 ---
