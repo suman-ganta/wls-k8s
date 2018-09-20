@@ -58,7 +58,9 @@ public class WlsController {
 
     if (WLS_ADMIN.equals(app)) {
       LOG.debug("Admin Server: " + pod.getMetadata().getName());
-      registerOrphanServers(pod);
+      if(pod.ping()) {
+        registerOrphanServers(pod);
+      }
     } else {
       LOG.debug("Managed Server: " + pod.getMetadata().getName());
       registerToAdmin(pod);
@@ -97,23 +99,50 @@ public class WlsController {
         LOG.debug(managedPod.getMetadata().getName() + "-> " + managedPod.getStatus());
         currentManagedPods.put(managedPod.getMetadata().getName(), managedPod);
       }
+      deleteTarget(adminPod, registeredServers, currentManagedPods, TargetType.MACHINE);
+      //deleteTarget(adminPod, registeredServers, currentManagedPods, TargetType.SERVER);
+
+      for (Pod managedPod : managedPods) {
+        registerManagedPod(adminPodIP, managedPod);
+      }
+    }
+  }
+
+  enum TargetType{
+    SERVER, MACHINE
+  }
+
+  private void deleteTarget(Pod adminPod, ServersStatus registeredServers, Map<String, Pod> currentManagedPods, TargetType target){
+    boolean editStarted = false;
+    WlsClient wlsClient = new WlsClient(adminPod.getStatus().getPodIP(), null);
+    try {
       for (ServerStatus item : registeredServers.getItems()) {
         if (shouldDelete(item.getName(), currentManagedPods)) {
           //this pod is gone, remove it.
           LOG.debug("Removing unavailable managed pod " + item.getName());
+          if(!editStarted){
+            wlsClient.startEdit();
+            editStarted = true;
+          }
           Pod deletedPod = new Pod();
           final Metadata metadata = new Metadata();
           metadata.setName(item.getName());
           deletedPod.setMetadata(metadata);
           wlsClient.setPod(deletedPod);
-          wlsClient.deleteServerIfNotExists();
-          wlsClient.deleteMachineIfNotExists();
+          if(target.equals(TargetType.SERVER)) {
+            wlsClient.deleteServerIfExists();
+          }else if(target.equals(TargetType.MACHINE)) {
+            wlsClient.deleteMachineIfExists();
+          }
+          LOG.info(String.format("Unregistered '%s' from '%s'", deletedPod.getMetadata().getName(), adminPod.getStatus().getPodIP()));
         }
       }
-
-      for (Pod managedPod : managedPods) {
-        registerManagedPod(adminPodIP, managedPod);
-      }
+      if(editStarted)
+        wlsClient.activate();
+    }catch (RuntimeException e){
+      LOG.error(e.getMessage(), e);
+      if(editStarted)
+        wlsClient.cancelEdit();
     }
   }
 
@@ -174,8 +203,11 @@ public class WlsController {
         return null;
       }
 
-      Pod p = pods.get(0);
-      return p.getStatus().getPodIP();
+      for (Pod pod : pods) {
+        if(pod.ping()){
+          return pod.getStatus().getPodIP();
+        }
+      }
     }
     return null;
   }
