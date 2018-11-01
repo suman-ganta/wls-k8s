@@ -232,7 +232,7 @@ public class WlsController {
   }
 
   private Client getClient(){
-    try {
+    try (final Scanner scanner = new Scanner(Paths.get(TOKEN_LOC))){
       SSLContext sslcontext = SSLContext.getInstance("TLS");
       sslcontext.init(null, new TrustManager[] {
           new X509TrustManager() {
@@ -253,7 +253,7 @@ public class WlsController {
           .hostnameVerifier((s1, s2) -> true)
           .build();
 
-      String token = new Scanner(Paths.get(TOKEN_LOC)).next();
+      String token = scanner.next();
       if(token != null) {
         c.register((ClientRequestFilter) requestContext -> requestContext.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + token));
       }
